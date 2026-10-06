@@ -6,7 +6,7 @@ from    data       import cell_address
 
 
 
-def makefile(soccer_list,       soccer_num,
+def create_excel_file(soccer_list,       soccer_num,
             basketball_list,    basketball_num,
             volleyball_list,    volleyball_num,
             dodgeball_list,     dodgeball_num):
@@ -47,9 +47,9 @@ def makefile(soccer_list,       soccer_num,
 
     
     used_sheet   = [str(soccer_num), str(basketball_num), str(volleyball_num), str(dodgeball_num), "timetable"]
-    delet_sheet  = [c for c in wb.sheetnames if c not in used_sheet]
-    for seet in delet_sheet:
-        del wb[seet]
+    delete_sheet  = [c for c in wb.sheetnames if c not in used_sheet]
+    for sheet in delete_sheet:
+        del wb[sheet]
 
     
     now         = datetime.datetime.now()

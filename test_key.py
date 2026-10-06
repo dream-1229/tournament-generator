@@ -2,7 +2,7 @@ import random
 
 from data import all_class
 from data import seed_position
-from data import first_mach_num_list
+from data import first_match_num_list
 
 
 def choose_class():
@@ -64,13 +64,13 @@ def class_random(class_list, ex_class_list, num):
     return result
 
 
-def input_first_mach(class_list, num):
+def input_first_match(class_list, num):
     result = []
-    first_mach_list = first_mach_num_list[num - 8]       #試合数に対応したfirst_machの2次元目の配列を取得
-    result = [[] for _ in range(len(first_mach_list))]          #resultに1次元目の配列を確保
+    first_match_list = first_match_num_list[num - 8]       #試合数に対応したfirst_matchの2次元目の配列を取得
+    result = [[] for _ in range(len(first_match_list))]          #resultに1次元目の配列を確保
 
-    for i in range(len(first_mach_list)):
-        for c in first_mach_list[i]:
+    for i in range(len(first_match_list)):
+        for c in first_match_list[i]:
             result[i].append(class_list[c])
 
     return result
@@ -88,14 +88,14 @@ def translate_list(class_list):
     
     return result
 
-def search_five(first_mach_list):
-    for i in range(len(first_mach_list)):
+def search_five(first_match_list):
+    for i in range(len(first_match_list)):
         search_a    = False
-        if len(first_mach_list[i]) >= 2:
-            search_a    = first_mach_list[i][0] / 10 == 5 and first_mach_list[i][1] / 10 == 5
+        if len(first_match_list[i]) >= 2:
+            search_a    = first_match_list[i][0] / 10 == 5 and first_match_list[i][1] / 10 == 5
         search_b    =False
-        if len(first_mach_list[i]) >= 4:
-            search_b    = first_mach_list[i][2] / 10 == 5 and first_mach_list[i][3] / 10 == 5
+        if len(first_match_list[i]) >= 4:
+            search_b    = first_match_list[i][2] / 10 == 5 and first_match_list[i][3] / 10 == 5
         if search_a or search_b: 
             return False
     return True
@@ -111,7 +111,7 @@ def main_control():
     
     while True:
         random_class_list   = class_random(nomal_class, excellent_class, num_of_class)     #並び替えた後のリスト
-        now_first_class          = input_first_mach(random_class_list, num_of_class)      #初戦の試合番号を振り分け
+        now_first_class          = input_first_match(random_class_list, num_of_class)      #初戦の試合番号を振り分け
         
         
         if search_five(now_first_class):
@@ -121,7 +121,7 @@ def main_control():
 
 
 
-def main_control_2(first_mach_list):
+def main_control_2(first_match_list):
     participate_class   = choose_class()   #出場クラスのリスト
     num_of_class        = len(participate_class)      #出場クラス数   
     excellent_class     = search_excellent_class()     #上位クラスのリスト(一位から三位)
@@ -129,25 +129,25 @@ def main_control_2(first_mach_list):
 
     while True:
         random_class_list   = class_random(nomal_class, excellent_class, num_of_class)     #並び替えた後のリスト
-        now_first_mach          = input_first_mach(random_class_list, num_of_class)      #初戦の試合番号を振り分け
+        now_first_match          = input_first_match(random_class_list, num_of_class)      #初戦の試合番号を振り分け
 
-        if  not search_five(now_first_mach):
+        if  not search_five(now_first_match):
             continue
 
-        len_list        = len(first_mach_list)
-        len_now_list    = len(now_first_mach)
+        len_list        = len(first_match_list)
+        len_now_list    = len(now_first_match)
 
         if len_list > len_now_list:
             for _ in range(len_list - len_now_list):
-                now_first_mach.append([])
+                now_first_match.append([])
 
         elif len_list < len_now_list:
             for _ in range(len_now_list - len_list):
-                first_mach_list.append([])
+                first_match_list.append([])
         
         merged = []
-        for i in range(len(now_first_mach)):
-            merged_match = now_first_mach[i] + first_mach_list[i]
+        for i in range(len(now_first_match)):
+            merged_match = now_first_match[i] + first_match_list[i]
             if len(merged_match) != len(set(merged_match)):
                 break
             merged.append(merged_match)

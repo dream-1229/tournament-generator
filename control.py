@@ -2,7 +2,7 @@ import random
 
 from data import all_class
 from data import seed_position
-from data import first_mach_num_list
+from data import first_match_num_list
 
 
 
@@ -34,13 +34,13 @@ def class_random(class_list, ex_class_list, num):
     return result
 
 
-def input_first_mach(class_list, num):
+def input_first_match(class_list, num):
     result = []
-    first_mach_list = first_mach_num_list[num]       #試合数に対応したfirst_machの2次元目の配列を取得
-    result = [[] for _ in range(len(first_mach_list))]          #resultに1次元目の配列を確保
+    first_match_list = first_match_num_list[num]       #試合数に対応したfirst_matchの2次元目の配列を取得
+    result = [[] for _ in range(len(first_match_list))]          #resultに1次元目の配列を確保
 
-    for i in range(len(first_mach_list)):
-        for c in first_mach_list[i]:
+    for i in range(len(first_match_list)):
+        for c in first_match_list[i]:
             result[i].append(class_list[c])
 
     return result
@@ -58,14 +58,14 @@ def translate_list(class_list):
     
     return result
 
-def search_five(first_mach_list):
-    for i in range(len(first_mach_list)):
+def search_five(first_match_list):
+    for i in range(len(first_match_list)):
         search_a    = False
-        if len(first_mach_list[i]) >= 2:
-            search_a    = first_mach_list[i][0] // 10 == 5 and first_mach_list[i][1] // 10 == 5
+        if len(first_match_list[i]) >= 2:
+            search_a    = first_match_list[i][0] // 10 == 5 and first_match_list[i][1] // 10 == 5
         search_b    =False
-        if len(first_mach_list[i]) >= 4:
-            search_b    = first_mach_list[i][2] // 10 == 5 and first_mach_list[i][3] // 10 == 5
+        if len(first_match_list[i]) >= 4:
+            search_b    = first_match_list[i][2] // 10 == 5 and first_match_list[i][3] // 10 == 5
         if search_a or search_b: 
             return False
     return True
@@ -77,61 +77,61 @@ def main_control(main_class, ex_class):
     participate_class   = main_class      #出場クラスのリスト
     num_of_class        = len(participate_class)      #出場クラス数   
     excellent_class     = ex_class     #上位クラスのリスト(一位から三位)
-    nomal_class         = [c for c in participate_class if c not in excellent_class]        #上位クラスではない参加クラスのリスト   list comprehensionを使用
+    normal_class         = [c for c in participate_class if c not in excellent_class]        #上位クラスではない参加クラスのリスト   list comprehensionを使用
     
 
     count = 0
     while True:
-        random_class_list   = class_random(nomal_class, excellent_class, num_of_class)     #並び替えた後のリスト
-        first_mach          = input_first_mach(random_class_list, num_of_class)      #初戦の試合番号を振り分け
+        random_class_list   = class_random(normal_class, excellent_class, num_of_class)     #並び替えた後のリスト
+        first_match          = input_first_match(random_class_list, num_of_class)      #初戦の試合番号を振り分け
                 
-        if search_five(first_mach):
+        if search_five(first_match):
             break
         count += 1
         if count % 1000 == 0:
             print("retry:", count)
-            for m in first_mach:
+            for m in first_match:
                 print(m)
-    return random_class_list, first_mach, num_of_class
+    return random_class_list, first_match, num_of_class
 
 
 
 
-def main_control_2(first_mach_list, main_class, ex_class):
+def main_control_2(first_match_list, main_class, ex_class):
     participate_class   = main_class     #出場クラスのリスト
     num_of_class        = len(participate_class)      #出場クラス数   
     excellent_class     = ex_class      #上位クラスのリスト(一位から三位)
-    nomal_class         = [c for c in participate_class if c not in excellent_class]        #上位クラスではない参加クラスのリスト   list comprehensionを使用
+    normal_class         = [c for c in participate_class if c not in excellent_class]        #上位クラスではない参加クラスのリスト   list comprehensionを使用
 
     count                   = 0
-    last_randam_class_list  = None
+    last_random_class_list  = None
     last_merged             = None
 
     while count < 5000:
-        random_class_list   = class_random(nomal_class, excellent_class, num_of_class)     #並び替えた後のリスト
-        now_first_mach          = input_first_mach(random_class_list, num_of_class)      #初戦の試合番号を振り分け
+        random_class_list   = class_random(normal_class, excellent_class, num_of_class)     #並び替えた後のリスト
+        now_first_match          = input_first_match(random_class_list, num_of_class)      #初戦の試合番号を振り分け
 
-        last_randam_class_list  = random_class_list
+        last_random_class_list  = random_class_list
 
 
-        if  not search_five(now_first_mach):
+        if  not search_five(now_first_match):
             count   += 1
             continue
 
-        len_list        = len(first_mach_list)
-        len_now_list    = len(now_first_mach)
+        len_list        = len(first_match_list)
+        len_now_list    = len(now_first_match)
 
         if len_list > len_now_list:
             for _ in range(len_list - len_now_list):
-                now_first_mach.append([])
+                now_first_match.append([])
 
         elif len_list < len_now_list:
             for _ in range(len_now_list - len_list):
-                first_mach_list.append([])
+                first_match_list.append([])
         
         merged = []
-        for i in range(len(now_first_mach)):
-            merged_match = now_first_mach[i] + first_mach_list[i]
+        for i in range(len(now_first_match)):
+            merged_match = now_first_match[i] + first_match_list[i]
             if len(merged_match) != len(set(merged_match)):
                 last_merged = merged
                 break
@@ -140,8 +140,4 @@ def main_control_2(first_mach_list, main_class, ex_class):
             return random_class_list, merged, num_of_class
         
     
-    return last_randam_class_list, last_merged, num_of_class
-
-
-
-#test
+    return last_random_class_list, last_merged, num_of_class
