@@ -2,7 +2,7 @@ import tkinter as tk
 import platform     #OS判別
 
 from control    import translate_list
-from main       import mian_function
+from main       import main_function
 
 is_mac = platform.system() == "Darwin"      #OS判別
 
@@ -94,7 +94,7 @@ class CheckPage(tk.Frame):
                 ]
 
         def make_tornament():
-            mian_function(
+            main_function(
                             controller.soccer_list,     controller.soccer_ex_list,
                             controller.basketball_list, controller.basketball_ex_list,
                             controller.volleyball_list, controller.volleyball_ex_list,

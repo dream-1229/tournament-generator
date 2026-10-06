@@ -7,3 +7,5 @@ venv/
 output/
 
 .D*_Store
+
+*.xlsx
