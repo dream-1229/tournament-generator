@@ -47,7 +47,7 @@ class Input_class_list(tk.Frame):
             print(name, self.target_list)
 
             if self.max_select != 3:
-                if len(self.target_list) >= 8 :     #8クラス未満、25クラス以上は未対応
+                if len(self.target_list) >= 8:     #8クラス未満、25クラス以上は未対応
                     next_button.config(state="normal")   
                 else:
                     next_button.config(state="disabled") 
