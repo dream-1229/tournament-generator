@@ -29,6 +29,8 @@ class Input_class_list(tk.Frame):
 
 
         def toggle_class(r, c, b):
+            nonlocal all_selected
+
             address = (r+1)*10 + (c+1)
 
             if address in self.target_list:
@@ -47,10 +49,53 @@ class Input_class_list(tk.Frame):
             print(name, self.target_list)
 
             if self.max_select != 3:
-                if len(self.target_list) >= 8:     #8クラス未満、25クラス以上は未対応
+                all_selected = len(self.target_list) == 25
+                if all_selected:
+                    toggle_button.config(text="全解除")
+                else:
+                    toggle_button.config(text="全選択")
+
+                if len(self.target_list) >= 8:     #8クラス未満
                     next_button.config(state="normal")   
                 else:
                     next_button.config(state="disabled") 
+
+        def toggle_all():
+            nonlocal all_selected
+
+            if not all_selected:
+                self.target_list.clear()
+
+                for row in range(5):
+                    for column in range(5):
+                        address = (row+1)*10 + (column+1)
+                        self .target_list.append(address)
+                        button = class_buttons[(row, column)]
+                        if is_mac:
+                            button.config(highlightbackground=self.bg)
+                        else:
+                            button.config(bg=self.bg)
+
+                toggle_button.config(text="全解除")
+                next_button.config(state ="normal")
+                all_selected = True
+
+            else:
+                self.target_list.clear()
+
+                for button in class_buttons.values():
+                    if is_mac:
+                        button.config(highlightbackground=default_bg)
+                    else:
+                        button.config(bg=default_bg)
+
+                toggle_button.config(text="全選択")
+                if self.max_select != 3:
+                    next_button.config(state="disabled")
+
+                all_selected = False
+                
+            print(name, self.target_list)
 
         #__________
         top_area    = tk.Frame(self)
@@ -62,6 +107,8 @@ class Input_class_list(tk.Frame):
         grid_area   =tk.Frame(self)
         grid_area.pack(expand=True)
 
+        class_buttons = {}
+        all_selected = False
         class_type  = ["A", "E", "S", "C", "M"]
 
         for row in range(5):
@@ -69,14 +116,20 @@ class Input_class_list(tk.Frame):
                 text    = f"{row+1}{letter}"
     
                 class_button  = tk.Button(grid_area, text=text)
+                class_buttons[(row, column)] = class_button
                 class_button.config(command= lambda r=row, c=column, b=class_button:toggle_class(r, c, b))
                 class_button.grid(row=row, column=column)
         #__________
         bottom_area =tk.Frame(self)
         bottom_area.pack()
 
-        next_button = tk.Button(self, text="完了",command=lambda: controller.show_frame(self.next_page), state=first_state)
-        next_button.pack()
+        if self.max_select != 3:
+            all_selected = False
+            toggle_button = tk.Button(bottom_area, text="全選択", command=toggle_all)
+            toggle_button.pack(side="left", padx=5)
+
+        next_button = tk.Button(bottom_area, text="完了", command=lambda: controller.show_frame(self.next_page), state=first_state)
+        next_button.pack(side="left", padx=5)
         #__________
 
 
