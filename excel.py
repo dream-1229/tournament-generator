@@ -1,10 +1,19 @@
-from    openpyxl        import load_workbook
-from    openpyxl.styles import Font
+from    openpyxl            import load_workbook
+from    openpyxl.styles     import Font
 import  datetime
 
 from    data       import cell_address
 
-
+def create_sheet(wb, class_num, title, class_list):
+    template    = wb[str(class_num)]
+    ws          = wb.copy_worksheet(template)
+    ws.title    = title
+    for i in range(class_num):
+            ws[cell_address[class_num][i]]  = class_list[i]
+            cell        = ws[cell_address[class_num][i]]
+            cell.font   = Font(size=20, bold=True)
+    ws["F1"]    = title
+    return ws
 
 def create_excel_file(soccer_list,       soccer_num,
             basketball_list,    basketball_num,
@@ -13,43 +22,19 @@ def create_excel_file(soccer_list,       soccer_num,
     
     wb=load_workbook("tornament_standard.xlsx")
 
-    ws_soccer       = wb[str(soccer_num)]
-    for i in range(soccer_num):
-        ws_soccer[cell_address[soccer_num][i]]          = soccer_list[i]
-        cell        = ws_soccer[cell_address[soccer_num][i]]
-        cell.font   = Font(size=20, bold=True)
-    ws_soccer["F1"]     = "サッカー"
-    ws_soccer.title     = "サッカー"
+    create_sheet(wb, soccer_num, "サッカー", soccer_list)
 
-    ws_basketball   = wb[str(basketball_num)]
-    for i in range(basketball_num):
-        ws_basketball[cell_address[basketball_num][i]]  = basketball_list[i]
-        cell        = ws_basketball[cell_address[basketball_num][i]]
-        cell.font   = Font(size=20, bold=True)
-    ws_basketball["F1"]   = "バスケ"
-    ws_basketball.title   = "バスケ"
+    create_sheet(wb, basketball_num, "バスケ", basketball_list)
 
-    ws_volleyball   = wb[str(volleyball_num)]
-    for i in range(volleyball_num):
-        ws_volleyball[cell_address[volleyball_num][i]]  = volleyball_list[i]
-        cell        = ws_volleyball[cell_address[volleyball_num][i]]
-        cell.font   = Font(size=20, bold=True)
-    ws_volleyball["F1"]   = "バレー"
-    ws_volleyball.title   = "バレー"
+    create_sheet(wb, volleyball_num, "バレー", volleyball_list)
 
-    ws_dodgeball    = wb[str(dodgeball_num)]
-    for i in range(dodgeball_num):
-        ws_dodgeball[cell_address[dodgeball_num][i]]    = dodgeball_list[i]
-        cell        = ws_dodgeball[cell_address[dodgeball_num][i]]
-        cell.font   = Font(size=20, bold=True)
-    ws_dodgeball["F1"]    = "ドッヂ"
-    ws_dodgeball.title    = "ドッヂ"
+    create_sheet(wb, dodgeball_num, "ドッヂ", dodgeball_list)
 
-    
-    used_sheet   = [str(soccer_num), str(basketball_num), str(volleyball_num), str(dodgeball_num), "timetable"]
-    delete_sheet  = [c for c in wb.sheetnames if c not in used_sheet]
-    for sheet in delete_sheet:
-        del wb[sheet]
+    keep_sheets = {"サッカー", "バスケ", "バレー", "ドッヂ", "timetable"}
+
+    for sheet_name in wb.sheetnames[:]:
+        if sheet_name not in keep_sheets:
+            del wb[sheet_name]
 
     
     now         = datetime.datetime.now()
