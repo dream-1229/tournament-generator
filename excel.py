@@ -1,5 +1,6 @@
 from    openpyxl            import load_workbook
 from    openpyxl.styles     import Font
+from    pathlib             import Path
 import  datetime
 
 from    data       import cell_address
@@ -38,5 +39,8 @@ def create_excel_file(soccer_list,       soccer_num,
 
     
     now         = datetime.datetime.now()
-    filename    = f"{now.year-2000}{now.month:02d}{now.day:02d}.xlsx"
-    wb.save(filename)
+    save_dir    = Path("ExcelFile")
+    save_dir.mkdir(parents=True, exist_ok=True)
+    filename    = now.strftime("%y%m%d_%H%M%S.xlsx")
+    save_path   = save_dir / filename
+    wb.save(save_path)

@@ -1,11 +1,13 @@
-__pycache__/
-*.pyc
+# Python 
+__pycache__/ 
+*.pyc 
 
-.venv/
-venv/
+# 仮想環境 
+.venv/ 
+venv/ 
 
-output/
+# OS固有ファイル 
+.DS_Store 
 
-.D*_Store
-
-*.xlsx
+# 生成されたExcelファイル 
+ExcelFile/*.xlsx
