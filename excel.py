@@ -16,22 +16,20 @@ def create_sheet(wb, class_num, title, class_list):
     ws["F1"]    = title
     return ws
 
-def create_excel_file(soccer_list,       soccer_num,
-            basketball_list,    basketball_num,
-            volleyball_list,    volleyball_num,
-            dodgeball_list,     dodgeball_num):
+def create_excel_file(sport_name, sport_list, sport_num
+            ):
     
     wb=load_workbook("tornament_standard.xlsx")
 
-    create_sheet(wb, soccer_num, "サッカー", soccer_list)
+    create_sheet(wb, sport_num, sport_name, sport_list)
 
-    create_sheet(wb, basketball_num, "バスケ", basketball_list)
+    # create_sheet(wb, basketball_num, "バスケ", basketball_list)
 
-    create_sheet(wb, volleyball_num, "バレー", volleyball_list)
+    # create_sheet(wb, volleyball_num, "バレー", volleyball_list)
 
-    create_sheet(wb, dodgeball_num, "ドッヂ", dodgeball_list)
+    # create_sheet(wb, dodgeball_num, "ドッヂ", dodgeball_list)
 
-    keep_sheets = {"サッカー", "バスケ", "バレー", "ドッヂ", "timetable"}
+    keep_sheets = {sport_name, "timetable"}
 
     for sheet_name in wb.sheetnames[:]:
         if sheet_name not in keep_sheets:

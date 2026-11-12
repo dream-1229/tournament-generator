@@ -12,11 +12,33 @@ class MainPage(tk.Frame):
         label = tk.Label(self, text="Main Page", font=("Helvetica", 35))
         label.pack(expand=True)
 
-        button = tk.Button(self, text="作成開始",command=lambda: controller.show_frame("soccer_class"))
+        button = tk.Button(self, text="作成開始",command=lambda: controller.show_frame("SportListPage"))
         button.pack()
 
 
-class Input_class_list(tk.Frame):
+
+class Input_SportNamePage(tk.Frame):
+    def __init__(self, parent, controller):
+            super().__init__(parent)
+
+            label   = tk.Label(self, text="種目名入力", font=("Helvetica", 35))
+            label.pack(pady=30)
+
+            entry = tk.Entry(self, font=("Helvetica", 20))
+            entry.pack(pady=10)
+
+            def save_sport_name():
+                sport_name = entry.get().strip()
+                if not sport_name:
+                    return
+                controller.sport_name   = sport_name
+                controller.show_frame("class_main")
+
+            button  = tk.Button(self, text="決定", command=save_sport_name)
+            button.pack()
+            
+
+class Input_class_listPage(tk.Frame):
     def __init__(self, parent, controller, title, name, target_list, max_select, bg, next_page, first_state):
         super().__init__(parent)
         self.controller     = controller
@@ -133,68 +155,45 @@ class Input_class_list(tk.Frame):
         #__________
 
 
-class CheckPage(tk.Frame):
+class SportListPage(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
 
         self.controller =controller
 
-        sport   =[
-                    ("soccer",      controller.soccer_list,     controller.soccer_ex_list),
-                    ("basketball",  controller.basketball_list, controller.basketball_ex_list),
-                    ("volleyball",  controller.volleyball_list, controller.volleyball_ex_list),
-                    ("dodgeball",   controller.dodgeball_list,  controller.dodgeball_ex_list)
-                ]
-
-        def make_tornament():
-            main_function(
-                            controller.soccer_list,     controller.soccer_ex_list,
-                            controller.basketball_list, controller.basketball_ex_list,
-                            controller.volleyball_list, controller.volleyball_ex_list,
-                            controller.dodgeball_list,  controller.dodgeball_ex_list,
-                        )
-            controller.show_frame("FinalPage")
-
-
         #__________    
         show_list_area  =tk.Frame(self)
         show_list_area.pack()
 
-        for row, (name, main_class, ex_class) in enumerate(sport):
-            area    = tk.Frame(show_list_area)
-            area.grid(row=row, column=0)
+        self.sport_label = tk.Label(self, text="登録されている種目はありません", font=("Helvetica", 20))
+        self.sport_label.pack(pady=30)
 
-            title   = tk.Label(area, text=f"{name}:", font=("Helvetica", 20))
-            title.grid(row=0, column=0)
+        self.add_button  = tk.Button(self, text="種目を追加", command=lambda: controller.show_frame("Input_SportNamePage"))
+        self.add_button.pack(pady=10)
 
-            
-            sorted_main     = sorted(main_class)
-            translate_main  = translate_list(sorted_main)
-
-            sub_title       = tk.Label(area, text="出場クラス　　:", font=("Helvetica", 15))
-            sub_title.grid(row=1, column=0)
-
-            for column, value in enumerate(translate_main, start=1):
-                label   = tk.Label(area, text=value, font=("Helvetica", 15))
-                label.grid(row=1, column=column)
-
-
-            sorted_ex     = sorted(ex_class)
-            translate_ex  = translate_list(sorted_ex)
-
-            sub_title       = tk.Label(area, text="戦績優秀クラス:", font=("Helvetica", 15))
-            sub_title.grid(row=2, column=0)
-
-            for column, value in enumerate(translate_ex, start=1):
-                label   = tk.Label(area, text=value, font=("Helvetica", 15))
-                label.grid(row=2, column=column)            
-
-
+        self.create_button = tk.Button(self, text="作成開始", state="disabled", command=self.make_tornament)
+        self.create_button.pack(pady=10)
         #__________
-        bottom_area = tk.Frame(self)
-        bottom_area.pack()
-        button = tk.Button(self, text="作成開始",command=lambda: make_tornament())
-        button.pack()
+        
+    def on_show(self):
+        if self.controller.class_list:
+            self.controller.sport_registered = True
+
+            self.sport_label.config(text=self.controller.sport_name)
+            self.add_button.config(state="disabled")
+            self.create_button.config(state="normal")
+        else:
+            self.sport_label.config(text="登録されている種目はありません")
+            self.add_button.config(state="normal")
+            self.create_button.config(state="disabled")
+    
+    def make_tornament(self):
+        main_function(
+            self.controller.sport_name,
+            self.controller.class_list,
+            self.controller.class_ex_list
+        )
+        self.controller.show_frame("FinalPage")
 
 class FinalPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -204,133 +203,53 @@ class FinalPage(tk.Frame):
 
 
 
-class soccer_class(Input_class_list):
+class class_main(Input_class_listPage):
     def __init__(self, parent, controller):
         super().__init__(parent,controller,
-                        title       = "サッカー:出場クラス",
-                        name        = "soccer_list           :",
-                        target_list = controller.soccer_list,
+                        title       = "出場クラス",
+                        name        = "first_list       :",
+                        target_list = controller.class_list,
                         max_select  = 25,
                         bg          = "#E00000",
-                        next_page   = "soccer_ex_class",
+                        next_page   = "ex_class",
                         first_state = "disabled"
                         )
 
-class soccer_ex_class(Input_class_list):
+class ex_class(Input_class_listPage):
     def __init__(self, parent, controller):
         super().__init__(parent,controller,
-                        title       = "サッカー:優秀戦績クラス",
-                        name        = "soccer_ex_list       :",
-                        target_list = controller.soccer_ex_list,
+                        title       = "優秀戦績クラス",
+                        name        = "first_ex_list    :",
+                        target_list = controller.class_ex_list,
                         max_select  = 3,
                         bg          = "#005EE0",
-                        next_page   = "basketball_class",
+                        next_page   = "SportListPage",
                         first_state = "normal"
                         )
-
-class basketball_class(Input_class_list):
-    def __init__(self, parent, controller):
-        super().__init__(parent,controller,
-                        title       = "バスケ:出場クラス",
-                        name        = "basketball_list      :",
-                        target_list = controller.basketball_list,
-                        max_select  = 25,
-                        bg          = "#E00000",
-                        next_page   = "basketball_ex_class",
-                        first_state = "disabled"
-                        )
-
-class basketball_ex_class(Input_class_list):
-    def __init__(self, parent, controller):
-        super().__init__(parent,controller,
-                        title       = "バスケ:優秀戦績クラス",
-                        name        = "basletball_ex_list   :",
-                        target_list = controller.basketball_ex_list,
-                        max_select  = 3,
-                        bg          = "#005EE0",
-                        next_page   = "volleyball_class",
-                        first_state = "normal"
-                        )
-        
-class volleyball_class(Input_class_list):
-    def __init__(self, parent, controller):
-        super().__init__(parent,controller,
-                        title       = "バレー:出場クラス",
-                        name        = "volleyball_list      :",
-                        target_list = controller.volleyball_list,
-                        max_select  = 25,
-                        bg          = "#E00000",
-                        next_page   = "volleyball_ex_class",
-                        first_state = "disabled"
-                        )
-
-class volleyball_ex_class(Input_class_list):
-    def __init__(self, parent, controller):
-        super().__init__(parent,controller,
-                        title       = "バレー:優秀戦績クラス",
-                        name        = "volleyball_ex_list   :",
-                        target_list = controller.volleyball_ex_list,
-                        max_select  = 3,
-                        bg          = "#005EE0",
-                        next_page   = "dodgeball_class",
-                        first_state = "normal"
-                        )
-
-class dodgeball_class(Input_class_list):
-    def __init__(self, parent, controller):
-        super().__init__(parent,controller,
-                        title       = "ドッヂボール:出場クラス",
-                        name        = "dodgeball_list       :",
-                        target_list = controller.dodgeball_list,
-                        max_select  = 25,
-                        bg          = "#E00000",
-                        next_page   = "dodgeball_ex_class",
-                        first_state = "disabled"
-                        )
-
-class dodgeball_ex_class(Input_class_list):
-    def __init__(self, parent, controller):
-        super().__init__(parent,controller,
-                        title       = "ドッヂボール:優秀戦績クラス",
-                        name        = "dodgeball_ex_list    :",
-                        target_list = controller.dodgeball_ex_list,
-                        max_select  = 3,
-                        bg          = "#005EE0",
-                        next_page   = "CheckPage",
-                        first_state = "normal"
-                        )
-
-
 
 
 class App(tk.Tk):
     def __init__(self):
 
-        self.soccer_list        = []
-        self.soccer_ex_list     = []
-        self.basketball_list    = []
-        self.basketball_ex_list = []
-        self.volleyball_list    = []
-        self.volleyball_ex_list = []
-        self.dodgeball_list     = []
-        self.dodgeball_ex_list  = []
-
-
         super().__init__()
         self.title("Tkinter change page")
         self.geometry("800x600")
+
+        self.sport_name         = ""
+        self.class_list         = []
+        self.class_ex_list      = []
+        self.sport_registered   = False
 
         container = tk.Frame(self)
         container.pack(fill="both", expand=True)
 
         self.frames = {}
 
-        for F in (MainPage, 
-                soccer_class, soccer_ex_class, 
-                basketball_class, basketball_ex_class,
-                volleyball_class, volleyball_ex_class,
-                dodgeball_class, dodgeball_ex_class,
-                CheckPage,
+        for F in (
+                MainPage, 
+                SportListPage,
+                Input_SportNamePage,
+                class_main, ex_class, 
                 FinalPage
                 ):
             page_name = F.__name__
@@ -341,12 +260,9 @@ class App(tk.Tk):
         self.show_frame("MainPage")
 
     def show_frame(self, page_name):
-        if page_name == "CheckPage":
-            container = self.frames["MainPage"].master  # 親コンテナを取得
-            self.frames["CheckPage"] = CheckPage(container, self)
-            self.frames["CheckPage"].grid(row=0, column=0, sticky="nsew")
-
         frame = self.frames[page_name]
+        if hasattr(frame, "on_show"):
+            frame.on_show()
         frame.tkraise()
 
 
